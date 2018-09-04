@@ -2,12 +2,35 @@ package br.ufpe.cin.if710.calculadora
 
 import android.app.Activity
 import android.os.Bundle
+import android.widget.Toast
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        if (savedInstanceState != null)
+            text_info.text = savedInstanceState.getString("expression")
+
+        for ((i, button) in arrayListOf(btn_0, btn_1, btn_2, btn_3, btn_4, btn_5, btn_6, btn_7, btn_8, btn_9).withIndex())
+            button.setOnClickListener { text_info.append(i.toString()) }
+        for ((k, v) in hashMapOf(btn_Dot to '.', btn_Add to '+', btn_Subtract to '-', btn_Multiply to '*', btn_Divide to '/', btn_Power to '^', btn_LParen to '(', btn_RParen to ')'))
+            k.setOnClickListener { text_info.append(v.toString()) }
+        btn_Clear.setOnClickListener { text_info.text = null }
+        btn_Equal.setOnClickListener {
+            try {
+                text_info.text = eval(text_info.text.toString()).toString()
+            } catch (e: RuntimeException) {
+                Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState?.putString("expression", text_info.text.toString())
     }
 
     //Como usar a função:
